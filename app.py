@@ -84,3 +84,7 @@ def search(
 
     out.sort(key=lambda x: x.score, reverse=True)
     return out[:k]
+
+@app.get("/")
+def root():
+    return {"service": "eurorack-relay", "health": "/healthz", "search": "/search?q=hello"}
