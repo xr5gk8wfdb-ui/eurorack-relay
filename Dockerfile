@@ -22,4 +22,4 @@ COPY . .
 ENV PORT=$PORT
 
 # Start using uvicorn and bind to 0.0.0.0:$PORT (important for Render)
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "${PORT}"]
+CMD ["sh","-lc","uvicorn app:app --host 0.0.0.0 --port ${PORT}"]
