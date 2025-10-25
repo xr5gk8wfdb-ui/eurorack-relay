@@ -19,7 +19,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Render will provide $PORT, so don't hardcode 8080
-ENV PORT=$PORT
+EXPOSE 8000
 
-# Start using uvicorn and bind to 0.0.0.0:$PORT (important for Render)
-CMD ["sh","-lc","uvicorn app:app --host 0.0.0.0 --port ${PORT}"]
+# Use a login shell so $PORT expands; exec replaces the shell; one worker keeps RAM low
+CMD ["bash", "-lc", "exec uvicorn app:app --host 0.0.0.0 --port ${PORT:-8000} --workers 1"]
