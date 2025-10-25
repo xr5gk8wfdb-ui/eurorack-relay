@@ -1,23 +1,25 @@
-# Simple production container
 FROM python:3.11-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# System deps (for sentence-transformers)
+# Install base tools (needed for some deps)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential git curl && \
     rm -rf /var/lib/apt/lists/*
 
+# Set working directory
 WORKDIR /app
 
+# Install python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY app.py ./app.py
+# Copy the rest of the app
+COPY . .
 
-# Expose port
-EXPOSE 8080
+# Render will provide $PORT, so don't hardcode 8080
+ENV PORT=$PORT
 
-# Start
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8080"]
+# Start using uvicorn and bind to 0.0.0.0:$PORT (important for Render)
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "${PORT}"]
